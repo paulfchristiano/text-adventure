@@ -1,0 +1,78 @@
+<html> 
+<head> 
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="dictionary.js"></script>
+<script type="text/javascript" src="scrabble.js"></script>
+<script type="text/javascript" src="jquery.js"></script> 
+<script type="text/javascript" src="main.js"></script>
+</head> 
+ 
+<body onload="load();"> 
+
+    <div> Score: <span id="score"></span></div>
+    <div> Skips: <span id="giveups"></span> </div>
+    <div> Timer: <span id="time"></span> <span id="bonustime" color="green"></span> </div>
+    <div> &nbsp; </div> 
+    <div style='font-family:monospace; font-size:2em'> <span id="source"></span> &nbsp; </div>
+    <div style='font-family:monospace; font-size:2em'> <span id="word"></span> &nbsp; </div> 
+    <div> &nbsp; </div> 
+    <div style='max-width:60ch;'> Words: <span id="guesses"></span> &nbsp; </div> 
+    <div> &nbsp; </div> 
+    <div style='max-width:60ch;'> Trophies: <span id="trophies"></span> &nbsp; </div> 
+    <div> &nbsp; </div>
+    <div style='max-width:60ch;'> Last: <span id="lastword"></span> &nbsp; </div> 
+    <div> &nbsp; </div> 
+    <div> Goal: find the anagram in time. </div>
+    <div> Smaller words give you extra time. </div>
+    <div> 'Enter' to submit a word or clear. </div>
+    <div> 'Space' to scramble. </div>
+    <div> 'Escape' to give up. </div>
+    <div> &nbsp; </div> 
+    <div> Minimum length:
+        <input type='radio' name='minlength' value='5'> 5
+        <input type='radio' name='minlength' value='6' checked='checked'> 6 
+        <input type='radio' name='minlength' value='7'> 7
+        <input type='radio' name='minlength' value='8'> 8
+        <input type='radio' name='minlength' value='9'> 9
+        <input type='radio' name='minlength' value='9'> 10
+    </div>
+    <div> Maximum length:
+        <input type='radio' name='maxlength' value='5'> 5
+        <input type='radio' name='maxlength' value='6'> 6 
+        <input type='radio' name='maxlength' value='7'> 7
+        <input type='radio' name='maxlength' value='8' checked='checked'> 8
+        <input type='radio' name='maxlength' value='9'> 9
+        <input type='radio' name='maxlength' value='9'> 10
+    </div>
+    <div> What words to use?
+        <input type='radio' name='dictionary' value='10k'> Top 10k
+        <input type='radio' name='dictionary' value='50k' checked='checked'> Top 50k
+        <input type='radio' name='dictionary' value='all'> All (280k)
+    </div>
+    <div> &nbsp; </div> 
+    <div> Use timer? <input type='checkbox' name='usetimer' checked='checked'> </div>
+    <div> Extra time per letter?
+        <input type='radio' name='timeadjustment' value='+0'> +0
+        <input type='radio' name='timeadjustment' value='+15' checked='checked'> +15s
+        <input type='radio' name='timeadjustment' value='+60'> +60s
+        <input type='radio' name='timeadjustment' value='x1.5'> 1.5x
+        <input type='radio' name='timeadjustment' value='x2'> 2x
+    </div>
+    <div> Base timer length?
+        <input type='radio' name='timelimit' value='15'> 15s
+        <input type='radio' name='timelimit' value='30' checked='checked'> 30s
+        <input type='radio' name='timelimit' value='60'> 60s
+        <input type='radio' name='timelimit' value='120'> 120s
+    </div>
+    <div> Extra time for small words?
+        <input type='radio' name='timeaddition' value='10'> None
+        <input type='radio' name='timeaddition' value='2' checked='checked'> Stingy
+        <input type='radio' name='timeaddition' value='0'> Generous
+    </div>
+    <div> &nbsp; </div> 
+    <div> <button onclick='reset(); $("#button").blur()' id=button>Apply changes and reset</button> </div>
+
+ 
+</body> 
+</html> 
