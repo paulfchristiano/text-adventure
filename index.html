@@ -24,7 +24,7 @@
     <div style='max-width:60ch;'> Last: <span id="lastword"></span> &nbsp; </div> 
     <div> &nbsp; </div> 
     <div> Goal: find the anagram in time. </div>
-    <div> Smaller words give you extra time. </div>
+    <div> Smaller words give you bonus time. </div>
     <div> 'Enter' to submit a word or clear. </div>
     <div> 'Space' to scramble. </div>
     <div> 'Escape' to give up. </div>
@@ -52,6 +52,12 @@
     </div>
     <div> &nbsp; </div> 
     <div> Use timer? <input type='checkbox' name='usetimer' checked='checked'> </div>
+    <div> Base timer length?
+        <input type='radio' name='timelimit' value='15'> 15s
+        <input type='radio' name='timelimit' value='30' checked='checked'> 30s
+        <input type='radio' name='timelimit' value='60'> 60s
+        <input type='radio' name='timelimit' value='120'> 120s
+    </div>
     <div> Extra time per letter?
         <input type='radio' name='timeadjustment' value='+0'> +0
         <input type='radio' name='timeadjustment' value='+15' checked='checked'> +15s
@@ -59,13 +65,7 @@
         <input type='radio' name='timeadjustment' value='x1.5'> 1.5x
         <input type='radio' name='timeadjustment' value='x2'> 2x
     </div>
-    <div> Base timer length?
-        <input type='radio' name='timelimit' value='15'> 15s
-        <input type='radio' name='timelimit' value='30' checked='checked'> 30s
-        <input type='radio' name='timelimit' value='60'> 60s
-        <input type='radio' name='timelimit' value='120'> 120s
-    </div>
-    <div> Extra time for small words?
+    <div> Bonus time for small words?
         <input type='radio' name='timeaddition' value='10'> None
         <input type='radio' name='timeaddition' value='2' checked='checked'> Stingy
         <input type='radio' name='timeaddition' value='0'> Generous
