@@ -17,6 +17,12 @@ var bonusTimeText;
 var paused;
 var lastWord;
 
+// TODO
+//
+// List words that stumped you
+// Provide definition for words?
+// Improve word list
+
 function randomWord(minLength, maxLength) {
     maxLength = Math.max(minLength, maxLength)
     dictionary = getSelectedDictionary()
@@ -238,6 +244,7 @@ function load() {
             deleteLetter()
         } else if (e.keyCode == 32) {
             scrambleBank()
+            e.preventDefault()
         } else if (e.keyCode == 27) {
             giveUp()
         } else {
