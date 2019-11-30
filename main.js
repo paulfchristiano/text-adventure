@@ -1,6 +1,5 @@
 var wordbits;
 var bankbits;
-var score;
 var giveups;
 var secretWord;
 var guesses
@@ -16,6 +15,9 @@ var timeAddedThreshold;
 var bonusTimeText;
 var paused;
 var lastWord;
+var victories;
+var failures;
+var pauseText = '(Enter to start)'
 
 // TODO
 //
@@ -39,7 +41,7 @@ function heartbeat() {
     if (useTimer && !paused) {
         timeRemaining -= 1
         if (timeRemaining <= 0) {
-            giveUp()
+            fail()
             refresh()
         }
         showTime()
@@ -108,20 +110,34 @@ function strFromKey(e) {
     return String.fromCharCode(e.keyCode)
 }
 
+function renderWord(word) {
+    return ('<a href="https://en.wiktionary.org/wiki/'
+        + word.toLowerCase()
+        + '#English" target="_blank" style="text-decoration:none;color:black" >'
+        + word +'</a>')
+}
+
+function renderWords(words) {
+    return words.map(renderWord).join(' ')
+}
+
+
 function refresh() {
     if (paused) {
-        $('#source').text('(Enter to start)')
+        $('#source').html(pauseText)
         $('#source').css('font-family', 'Times New Roman')
     } else {
         $('#source').text(bankbits.join(''))
         $('#source').css('font-family', 'monospace')
     }
     $('#word').text(wordbits.join(''))
-    $('#score').text(score)
-    $('#lastword').text(lastWord)
-    $('#giveups').text(giveups)
-    $('#guesses').text(guesses.join(' '))
-    $('#trophies').text(trophies.join(' '))
+
+    $('#victorycount').text(victories.length)
+    $('#attempts').text(failures.length + victories.length)
+
+    $('#victories').html(renderWords(victories))
+    $('#failures').html(renderWords(failures))
+    $('#guesses').text(renderWords(guesses))
     showTime()
 }
 
@@ -175,9 +191,17 @@ function winner() {
     return (bankbits.length == 0) && isWord(currentWord())
 }
 
-function giveUp() {
-    giveups += 1
+function fail() {
     bonusTimeText = 0
+    pauseText = "(It was " + renderWord(secretWord) + ")"
+    failures.push(secretWord)
+    initialize()
+}
+
+function succeed(word) {
+    bonusTimeText = 0
+    pauseText = "(Enter to start)"
+    victories.push(word)
     initialize()
 }
 
@@ -192,9 +216,8 @@ function addWord() {
 }
 
 function reset(){
-    score = 0
-    giveups = 0
-    trophies = []
+    victories = []
+    failures = []
     secretWord = ""
 
     timeAdjustmentRule = $('input[name=timeadjustment]:checked').val()
@@ -231,9 +254,7 @@ function load() {
             }
         } else if (e.keyCode == 13){
             if (winner()) {
-                score += 1
-                trophies.push(currentWord())
-                initialize()
+                succeed(currentWord())
             } else if (isWord(currentWord())) {
                 addWord(currentWord())
                 deleteAll()
@@ -246,7 +267,7 @@ function load() {
             scrambleBank()
             e.preventDefault()
         } else if (e.keyCode == 27) {
-            giveUp()
+            fail()
         } else {
             addLetterIfIn(strFromKey(e))
         }
