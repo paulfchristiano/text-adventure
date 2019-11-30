@@ -5,13 +5,8 @@ var secretWord;
 var guesses
 var minlength;
 var maxlength;
-var timeAdjustmentRule;
-var baseTimeLimit;
-var timer;
-var useTimer;
+var settings;
 var timeRemaining;
-var dictionaryName;
-var timeAddedThreshold;
 var bonusTimeText;
 var paused;
 var lastWord;
@@ -22,6 +17,7 @@ var pauseText;
 // TODO
 //
 // Improve word frequency sorting
+// Save default settings in cookie
 
 function randomWord(minLength, maxLength) {
     maxLength = Math.max(minLength, maxLength)
@@ -36,7 +32,7 @@ function randomWord(minLength, maxLength) {
 }
 
 function heartbeat() {
-    if (useTimer && !paused) {
+    if (settings.useTimer && !paused) {
         timeRemaining -= 1
         if (timeRemaining <= 0) {
             fail()
@@ -47,35 +43,31 @@ function heartbeat() {
 }
 
 function getSelectedDictionary() {
-    if (dictionaryName  == '10k') {
+    if (settings.dictionaryName  == '10k') {
         return smallDictionary
-    } else if (dictionaryName == '50k') {
+    } else if (settings.dictionaryName == '50k') {
         return dictionary
-    } else if (dictionaryName == 'all') {
+    } else if (settings.dictionaryName == 'all') {
         return bigDictionary
     }
-    console.log("didn't find dictionary with name " + dictionaryName)
-}
-
-function baseTimeLimit() {
-    return 
+    console.log("didn't find dictionary with name " + settings.dictionaryName)
 }
 
 function getTimeLimit() {
-    var diff =  secretWord.length - minlength;
-    if (timeAdjustmentRule[0] == "+") {
-        var adjustment = Number(timeAdjustmentRule.substring(1)) * diff
-        return baseTimeLimit + adjustment
-    } else if (timeAdjustmentRule[0] == "x") {
-        var multiple = Math.pow(Number(timeAdjustmentRule.substring(1)), diff)
-        return baseTimeLimit * multiple
+    var diff =  secretWord.length - settings.minLength;
+    if (settings.timeAdjustmentRule[0] == "+") {
+        var adjustment = Number(settings.timeAdjustmentRule.substring(1)) * diff
+        return settings.baseTimeLimit + adjustment
+    } else if (settings.timeAdjustmentRule[0] == "x") {
+        var multiple = Math.pow(Number(settings.timeAdjustmentRule.substring(1)), diff)
+        return settings.baseTimeLimit * multiple
     } else {
-        return baseTimeLimit
+        return settings.baseTimeLimit
     }
 }
 
 function randomBank() {
-    secretWord = randomWord(minlength, maxlength)
+    secretWord = randomWord(settings.minLength, settings.maxLength)
     bankbits = secretWord.split('')
 }
 
@@ -169,7 +161,7 @@ function showTime() {
     $('#time').css('color', 'black')
     if (paused) {
         $('#time').text('')
-    } else if (useTimer) {
+    } else if (settings.useTimer) {
         if (timeRemaining < 10) {
             $('#time').css('color', 'red')
         }
@@ -206,11 +198,68 @@ function succeed(word) {
 function addWord() {
     if (guesses.indexOf(currentWord()) == -1) {
         guesses.push(currentWord())
-        var bonusTime = Math.max(0, currentWord().length - timeAddedThreshold)
+        var bonusTime = Math.max(0, currentWord().length - settings.timeAddedThreshold)
         timeRemaining += bonusTime
         bonusTimeText = bonusTime
         showTime()
     }
+}
+
+function isChecked(name) {
+    return $('input[name='+name+']:checked').length > 0
+}
+
+function getValue(name) {
+    return $('input[name='+name+']:checked').val()
+}
+
+var defaultSettings = {
+    timeAdjustmentRule: '+15',
+    useTimer: true,
+    allowPausing: false,
+    baseTimeLimit: 30,
+    minLength: 6,
+    maxLength: 8,
+    dictionaryName: '50k',
+    timeAddedThreshold: 2
+}
+
+function getSettings() {
+    return {
+        timeAdjustmentRule: getValue('timeadjustment'),
+        useTimer: isChecked('usetimer'),
+        allowPausing: isChecked('allowpausing'),
+        baseTimeLimit : Number(getValue('timelimit')),
+        minLength : Number(getValue('minlength')),
+        maxLength : Number(getValue('maxlength')),
+        dictionaryName : getValue('dictionary'),
+        timeAddedThreshold : Number(getValue('timeaddition')),
+    }
+}
+
+function checkIf(name, test) {
+    var elem = $('input[name='+name+']')
+    if (test) {
+        elem.attr('checked', 'checked')
+    } else {
+        elem.attr('checked', '')
+    }
+}
+
+function setTo(name, value) {
+    $('input[name='+name+'][value='+value+']').attr('checked', 'checked')
+}
+
+function writeSettings(newSettings) {
+    settings = newSettings
+    setTo('timeadjustment', settings.timeAdjustmentRule)
+    checkIf('usetimer', settings.useTimer)
+    checkIf('allowpausing', settings.allowPausing)
+    setTo('timelimit', settings.baseTimeLimit)
+    setTo('minlength', settings.minLength)
+    setTo('maxlength', settings.maxLength)
+    setTo('dictionary', settings.dictionaryName)
+    setTo('timeaddition', settings.timeAddedThreshold)
 }
 
 function reset(){
@@ -219,13 +268,7 @@ function reset(){
     secretWord = ""
     pauseText = "(Enter to start)"
 
-    timeAdjustmentRule = $('input[name=timeadjustment]:checked').val()
-    useTimer = $('input[name=usetimer]:checked').length > 0
-    baseTimeLimit = parseInt($('input[name=timelimit]:checked').val())
-    minlength = parseInt($('input[name=minlength]:checked').val())
-    maxlength = parseInt($('input[name=maxlength]:checked').val())
-    dictionaryName = $('input[name=dictionary]:checked').val()
-    timeAddedThreshold = parseInt($('input[name=timeaddition]:checked').val())
+    settings = getSettings()
 
     initialize()
 }
@@ -241,16 +284,37 @@ function initialize() {
     refresh()
 }
 
+function equalValues(obj1, obj2) {
+    var props1 = Object.getOwnPropertyNames(obj1)
+    var props2 = Object.getOwnPropertyNames(obj2)
+    if (props1.length != props2.length) {
+        console.log("Comparing objects with different keys")
+        return false
+    }
+    return props1.every(name => obj1[name] == obj2[name])
+}
+
 
 function load() {
+    writeSettings(defaultSettings)
     setInterval(heartbeat, 1000)
     reset()
+    $(document).click(e => {
+        if (!equalValues(settings, getSettings())) {
+            $('#changewarning').text("Press button to apply changes")
+        } else {
+            $('#changewarning').text("")
+        }
+    })
     $(document).keydown(e => {
         bonusTimeText = 0
         if (paused) {
-            if (e.keyCode == 13) {
+            if (e.keyCode == 13 || e.keyCode == 186) {
                 paused = false
             }
+        } else if (e.keyCode == 186 && settings.allowPausing){
+            pauseText = "(Enter to resume)"
+            paused = true
         } else if (e.keyCode == 13){
             if (winner()) {
                 succeed(currentWord())
