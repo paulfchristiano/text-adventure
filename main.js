@@ -252,6 +252,7 @@ function setTo(name, value) {
 
 function writeSettings(newSettings) {
     settings = newSettings
+    settingsToCookie(settings)
     setTo('timeadjustment', settings.timeAdjustmentRule)
     checkIf('usetimer', settings.useTimer)
     checkIf('allowpausing', settings.allowPausing)
@@ -294,9 +295,33 @@ function equalValues(obj1, obj2) {
     return props1.every(name => obj1[name] == obj2[name])
 }
 
+function setCookie(name,value) {
+    document.cookie = name + "=" + (value || "")  + "; path=/";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+function settingsFromCookie() {
+    var loaded = getCookie('settings')
+    if (loaded == null) {
+        return defaultSettings
+    } else {
+        return JSON.parse(loaded)
+    }
+}
+function settingsToCookie(settings) {
+    setCookie('settings', JSON.stringify(settings))
+}
 
 function load() {
-    writeSettings(defaultSettings)
+    writeSettings(settingsFromCookie())
     setInterval(heartbeat, 1000)
     reset()
     $(document).click(e => {
@@ -337,3 +362,4 @@ function load() {
         refresh()
     })
 }
+
