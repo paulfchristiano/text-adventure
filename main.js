@@ -21,9 +21,7 @@ var pauseText;
 
 // TODO
 //
-// List words that stumped you
-// Provide definition for words?
-// Improve word list
+// Improve word frequency sorting
 
 function randomWord(minLength, maxLength) {
     maxLength = Math.max(minLength, maxLength)
@@ -137,7 +135,7 @@ function refresh() {
 
     $('#victories').html(renderWords(victories))
     $('#failures').html(renderWords(failures))
-    $('#guesses').text(renderWords(guesses))
+    $('#guesses').html(renderWords(guesses))
     showTime()
 }
 
