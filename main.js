@@ -116,7 +116,7 @@ function renderWords(words) {
 }
 
 function wrapWithAction(text, f) {
-    return ['<a onclick="',f,'" style="text-decoration:none;color:black">', text, '</a>'].join('')
+    return ['<a href="javascript:',f,'" style="text-decoration:none;color:black">', text, '</a>'].join('')
 }
 
 // TODO: handle escapes etc.
