@@ -223,6 +223,17 @@ var defaultSettings = {
     timeAddedThreshold: 2
 }
 
+var longSettings = {
+    timeAdjustmentRule: '+30',
+    useTimer: true,
+    allowPausing: false,
+    baseTimeLimit: 60,
+    minLength: 9,
+    maxLength: 10,
+    dictionaryName: '50k',
+    timeAddedThreshold: 2
+}
+
 function settingsFromUI() {
     return {
         timeAdjustmentRule: getValue('timeadjustment'),
@@ -278,13 +289,8 @@ function reset(){
     initialize()
 }
 
-function applyAndReset() {
-    setSettings(settingsFromUI())
-    reset()
-}
-
-function backToDefaults() {
-    setSettings(defaultSettings)
+function applyAndReset(settings) {
+    setSettings(settings)
     reset()
 }
 
