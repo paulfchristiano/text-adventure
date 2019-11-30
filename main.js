@@ -100,14 +100,29 @@ function strFromKey(e) {
 }
 
 function renderWord(word) {
-    return ('<a href="https://en.wiktionary.org/wiki/'
-        + word.toLowerCase()
-        + '#English" target="_blank" style="text-decoration:none;color:black" >'
-        + word +'</a>')
+    return wrapWithLink(word, 'https://en.wiktionary.org/wiki/' + word.toLowerCase() + '#English')
+}
+
+function wrapWithLink(text, link) {
+    return ['<a href="',
+        link,
+        '" target="_blank" style="text-decoration:none;color:black">',
+        text,
+        '</a>'].join('')
 }
 
 function renderWords(words) {
     return words.map(renderWord).join(' ')
+}
+
+function wrapWithAction(text, f) {
+    return ['<a onclick="',f,'" style="text-decoration:none;color:black">', text, '</a>'].join('')
+}
+
+// TODO: handle escapes etc.
+
+function renderLetter(c) {
+    return wrapWithAction(c, "addLetterIfIn('" + c + "'); refresh()")
 }
 
 
@@ -116,10 +131,10 @@ function refresh() {
         $('#source').html(pauseText)
         $('#source').css('font-family', 'Times New Roman')
     } else {
-        $('#source').text(bankbits.join(''))
+        $('#source').html(bankbits.map(renderLetter).join(''))
         $('#source').css('font-family', 'monospace')
     }
-    $('#word').text(wordbits.join(''))
+    $('#word').html(wrapWithAction(wordbits.join(''), 'doEnter(); refresh()'))
 
     $('#victorycount').text(victories.length)
     $('#attempts').text(failures.length + victories.length)
@@ -182,14 +197,14 @@ function winner() {
 
 function fail() {
     bonusTimeText = 0
-    pauseText = "(It was " + renderWord(secretWord) + ")"
+    pauseText = ["(", unpauser("It was "), renderWord(secretWord), ")"].join('')
     failures.push(secretWord)
     initialize()
 }
 
 function succeed(word) {
     bonusTimeText = 0
-    pauseText = "(Enter to start)"
+    pauseText = unpauser("(Enter to start)")
     victories.push(word)
     initialize()
 }
@@ -277,12 +292,15 @@ function setSettings(newSettings) {
     settingsToUI(settings)
 }
 
+function unpauser(text) {
+    return wrapWithAction(text, 'unpause(); refresh()')
+}
 
 function reset(){
     victories = []
     failures = []
     secretWord = ""
-    pauseText = "(Enter to start)"
+    pauseText = unpauser("(Enter to start)")
 
     setSettings(settingsFromUI())
 
@@ -340,6 +358,21 @@ function settingsToCookie(settings) {
     setCookie('settings', JSON.stringify(settings))
 }
 
+function unpause() {
+    paused = false
+}
+
+function doEnter() {
+    if (winner()) {
+        succeed(currentWord())
+    } else if (isWord(currentWord())) {
+        addWord(currentWord())
+        deleteAll()
+    } else {
+        deleteAll()
+    }
+}
+
 function load() {
     setSettings(settingsFromCookie())
     setInterval(heartbeat, 1000)
@@ -355,20 +388,13 @@ function load() {
         bonusTimeText = 0
         if (paused) {
             if (e.keyCode == 13 || e.keyCode == 186) {
-                paused = false
+                unpause()
             }
         } else if (e.keyCode == 186 && settings.allowPausing){
             pauseText = "(Enter to resume)"
             paused = true
         } else if (e.keyCode == 13){
-            if (winner()) {
-                succeed(currentWord())
-            } else if (isWord(currentWord())) {
-                addWord(currentWord())
-                deleteAll()
-            } else {
-                deleteAll()
-            }
+            doEnter()
         } else if (e.keyCode == 8) {
             deleteLetter()
         } else if (e.keyCode == 32) {
