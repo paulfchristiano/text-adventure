@@ -16,6 +16,7 @@ var pauseText;
 
 // TODO
 //
+// Fix bugs on mobile
 // Improve word frequency sorting
 
 function randomWord(minLength, maxLength) {
@@ -209,10 +210,16 @@ function succeed(word) {
     initialize()
 }
 
+function getBonusTime(N) {
+    const [threshold, exp] = settings.bonusTimeRules.split(",")
+    return Math.pow(Math.max(0, N - threshold), exp)
+}
+
+
 function addWord() {
     if (guesses.indexOf(currentWord()) == -1) {
         guesses.push(currentWord())
-        var bonusTime = Math.max(0, currentWord().length - settings.timeAddedThreshold)
+        var bonusTime = getBonusTime(currentWord().length)
         timeRemaining += bonusTime
         bonusTimeText = bonusTime
         showTime()
@@ -235,7 +242,7 @@ var defaultSettings = {
     minLength: 6,
     maxLength: 8,
     dictionaryName: '50k',
-    timeAddedThreshold: 2
+    bonusTimeRules: '2,1',
 }
 
 var longSettings = {
@@ -246,7 +253,18 @@ var longSettings = {
     minLength: 9,
     maxLength: 10,
     dictionaryName: '50k',
-    timeAddedThreshold: 2
+    bonusTimeRules: '2,1',
+}
+
+var franticSettings = {
+    timeAdjustmentRule: '+0',
+    useTimer: true,
+    allowPausing: false,
+    baseTimeLimit: 15,
+    minLength: 8,
+    maxLength: 9,
+    dictionaryName: '50k',
+    bonusTimeRules: '3,2',
 }
 
 function settingsFromUI() {
@@ -258,7 +276,7 @@ function settingsFromUI() {
         minLength : Number(getValue('minlength')),
         maxLength : Number(getValue('maxlength')),
         dictionaryName : getValue('dictionary'),
-        timeAddedThreshold : Number(getValue('timeaddition')),
+        bonusTimeRules: getValue('timeaddition'),
     }
 }
 
@@ -283,7 +301,7 @@ function settingsToUI(settings) {
     setTo('minlength', settings.minLength)
     setTo('maxlength', settings.maxLength)
     setTo('dictionary', settings.dictionaryName)
-    setTo('timeaddition', settings.timeAddedThreshold)
+    setTo('timeaddition', settings.bonusTimeRules)
 }
 
 function setSettings(newSettings) {

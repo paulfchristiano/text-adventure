@@ -46,7 +46,7 @@
         <input type='radio' name='maxlength' value='9'> 9
         <input type='radio' name='maxlength' value='10'> 10
     </div>
-    <div> What words to use?
+    <div> Allowed words
         <input type='radio' name='dictionary' value='10k'> Top 10k
         <input type='radio' name='dictionary' value='50k'> Top 50k
         <input type='radio' name='dictionary' value='all'> All (280k)
@@ -55,30 +55,33 @@
     <div> Allow pausing? (;) <input type='checkbox' name='allowpausing'> </div>
     <div> &nbsp; </div> 
     <div> Use timer? <input type='checkbox' name='usetimer'> </div>
-    <div> Base timer length?
+    <div> Timer length:
         <input type='radio' name='timelimit' value='15'> 15s
         <input type='radio' name='timelimit' value='30'> 30s
         <input type='radio' name='timelimit' value='60'> 60s
         <input type='radio' name='timelimit' value='120'> 120s
     </div>
-    <div> Extra time per letter?
-        <input type='radio' name='timeadjustment' value='+0'> None
-        <input type='radio' name='timeadjustment' value='+15'> +15s
-        <input type='radio' name='timeadjustment' value='+30'> +30s
-        <input type='radio' name='timeadjustment' value='+60'> +60s
+    <div> Extra time for long words:
+        <input type='radio' name='timeadjustment' value='+0'> 0
+        <input type='radio' name='timeadjustment' value='+15'> 15
+        <input type='radio' name='timeadjustment' value='+30'> 30
+        <input type='radio' name='timeadjustment' value='+60'> 60
     </div>
-    <div> Bonus seconds for N-letter word?
-        <input type='radio' name='timeaddition' value='20'> None
-        <input type='radio' name='timeaddition' value='2'> N-2
-        <input type='radio' name='timeaddition' value='0'> N
+    <div> Bonus seconds per word:
+        <input type='radio' name='timeaddition' value='10,1'> 0
+        <input type='radio' name='timeaddition' value='2,1'> N-2
+        <input type='radio' name='timeaddition' value='0,1'> N
+        <input type='radio' name='timeaddition' value='3,2'> (N-3)^2
     </div>
     <div> &nbsp; </div> 
+    <div> Pick a standard mode: </div> 
     <div>
-        <button onclick='applyAndReset(defaultSettings); $("#button1").blur()' id=button1>Reset defaults</button>
-        <button onclick='applyAndReset(longSettings); $("#button3").blur()' id=button3>Use long words</button>
+        <button onclick='applyAndReset(defaultSettings); $("#button1").blur()' id=button1>Default</button>
+        <button onclick='applyAndReset(longSettings); $("#button2").blur()' id=button2>Long</button>
+        <button onclick='applyAndReset(franticSettings); $("#button3").blur()' id=button3>Frantic</button>
     </div>
     <div> &nbsp; </div> 
-    <div> <button onclick='applyAndReset(settingsFromUI()); $("#button2").blur()' id=button2>Apply changes and reset</button> </div>
+    <div> <button onclick='applyAndReset(settingsFromUI()); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
     <div> <span style='color:red' id='changewarning'></span> </div>
 
  
