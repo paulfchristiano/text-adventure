@@ -278,6 +278,16 @@ function reset(){
     initialize()
 }
 
+function applyAndReset() {
+    setSettings(settingsFromUI())
+    reset()
+}
+
+function backToDefaults() {
+    setSettings(defaultSettings)
+    reset()
+}
+
 function initialize() {
     wordbits = []
     paused = true
