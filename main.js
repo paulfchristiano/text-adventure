@@ -17,7 +17,7 @@ var paused;
 var lastWord;
 var victories;
 var failures;
-var pauseText = '(Enter to start)'
+var pauseText;
 
 // TODO
 //
@@ -219,6 +219,7 @@ function reset(){
     victories = []
     failures = []
     secretWord = ""
+    pauseText = "(Enter to start)"
 
     timeAdjustmentRule = $('input[name=timeadjustment]:checked').val()
     useTimer = $('input[name=usetimer]:checked').length > 0
