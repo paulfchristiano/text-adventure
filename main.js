@@ -17,7 +17,6 @@ var pauseText;
 // TODO
 //
 // Improve word frequency sorting
-// Save default settings in cookie
 
 function randomWord(minLength, maxLength) {
     maxLength = Math.max(minLength, maxLength)
@@ -224,7 +223,7 @@ var defaultSettings = {
     timeAddedThreshold: 2
 }
 
-function getSettings() {
+function settingsFromUI() {
     return {
         timeAdjustmentRule: getValue('timeadjustment'),
         useTimer: isChecked('usetimer'),
@@ -250,9 +249,7 @@ function setTo(name, value) {
     $('input[name='+name+'][value='+value+']').attr('checked', 'checked')
 }
 
-function writeSettings(newSettings) {
-    settings = newSettings
-    settingsToCookie(settings)
+function settingsToUI(settings) {
     setTo('timeadjustment', settings.timeAdjustmentRule)
     checkIf('usetimer', settings.useTimer)
     checkIf('allowpausing', settings.allowPausing)
@@ -263,13 +260,20 @@ function writeSettings(newSettings) {
     setTo('timeaddition', settings.timeAddedThreshold)
 }
 
+function setSettings(newSettings) {
+    settings = newSettings
+    settingsToCookie(settings)
+    settingsToUI(settings)
+}
+
+
 function reset(){
     victories = []
     failures = []
     secretWord = ""
     pauseText = "(Enter to start)"
 
-    settings = getSettings()
+    setSettings(settingsFromUI())
 
     initialize()
 }
@@ -321,11 +325,11 @@ function settingsToCookie(settings) {
 }
 
 function load() {
-    writeSettings(settingsFromCookie())
+    setSettings(settingsFromCookie())
     setInterval(heartbeat, 1000)
     reset()
     $(document).click(e => {
-        if (!equalValues(settings, getSettings())) {
+        if (!equalValues(settings, settingsFromUI())) {
             $('#changewarning').text("Press button to apply changes")
         } else {
             $('#changewarning').text("")
