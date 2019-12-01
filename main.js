@@ -376,6 +376,7 @@ function pauseThen(text, f, delay) {
     } else {
         waitUntil = time() + delay
     }
+    bonusTimeText = 0
     paused = true
     pauseTime = 
     pauseText = text
