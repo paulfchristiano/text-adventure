@@ -76,12 +76,12 @@
     <div> &nbsp; </div> 
     <div> Pick a standard mode: </div> 
     <div>
-        <button onclick='applyAndReset(defaultSettings); $("#button1").blur()' id=button1>Default</button>
-        <button onclick='applyAndReset(longSettings); $("#button2").blur()' id=button2>Long</button>
-        <button onclick='applyAndReset(franticSettings); $("#button3").blur()' id=button3>Frantic</button>
+        <button onclick='setSettings(defaultSettings); reset(); $("#button1").blur()' id=button1>Default</button>
+        <button onclick='setSettings(longSettings); reset(); $("#button2").blur()' id=button2>Long</button>
+        <button onclick='setSettings(franticSettings); reset(); $("#button3").blur()' id=button3>Frantic</button>
     </div>
     <div> &nbsp; </div> 
-    <div> <button onclick='applyAndReset(settingsFromUI()); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
+    <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
     <div> <span style='color:red' id='changewarning'></span> </div>
 
  

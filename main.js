@@ -9,14 +9,14 @@ var settings;
 var timeRemaining;
 var bonusTimeText;
 var paused;
-var lastWord;
 var victories;
 var failures;
 var pauseText;
+var queuedFunction;
 
 // TODO
 //
-// Fix bugs on mobile
+// Fix formatting on mobile
 // Improve word frequency sorting
 
 function randomWord(minLength, maxLength) {
@@ -131,11 +131,12 @@ function refresh() {
     if (paused) {
         $('#source').html(pauseText)
         $('#source').css('font-family', 'Times New Roman')
+        $('#word').html('')
     } else {
         $('#source').html(bankbits.map(renderLetter).join(''))
         $('#source').css('font-family', 'monospace')
+        $('#word').html(wrapWithAction(wordbits.join(''), 'doEnter(); refresh()'))
     }
-    $('#word').html(wrapWithAction(wordbits.join(''), 'doEnter(); refresh()'))
 
     $('#victorycount').text(victories.length)
     $('#attempts').text(failures.length + victories.length)
@@ -200,14 +201,13 @@ function fail() {
     bonusTimeText = 0
     pauseText = ["(", unpauser("It was "), renderWord(secretWord), ")"].join('')
     failures.push(secretWord)
-    initialize()
+    pauseThen(pauseText, initialize, 0.5)
 }
 
 function succeed(word) {
     bonusTimeText = 0
-    pauseText = unpauser("(Enter to start)")
     victories.push(word)
-    initialize()
+    pauseThen(unpauser("(Enter to start)"), initialize)
 }
 
 function getBonusTime(N) {
@@ -317,23 +317,12 @@ function unpauser(text) {
 function reset(){
     victories = []
     failures = []
-    secretWord = ""
-    pauseText = unpauser("(Enter to start)")
-
-    setSettings(settingsFromUI())
-
-    initialize()
-}
-
-function applyAndReset(settings) {
-    setSettings(settings)
-    reset()
+    guesses = []
+    pauseThen(unpauser("(Enter to start)"), initialize)
 }
 
 function initialize() {
     wordbits = []
-    paused = true
-    lastWord = secretWord
     randomBank()
     scrambleBank()
     guesses = []
@@ -372,12 +361,36 @@ function settingsFromCookie() {
         return JSON.parse(loaded)
     }
 }
+ 
 function settingsToCookie(settings) {
     setCookie('settings', JSON.stringify(settings))
 }
 
+function time() {
+    return Date.now() / 1000;
+}
+
+function pauseThen(text, f, delay) {
+    if (delay == undefined) {
+        waitUntil = time()
+    } else {
+        waitUntil = time() + delay
+    }
+    paused = true
+    pauseTime = 
+    pauseText = text
+    queuedFunction = f
+    refresh()
+}
+
 function unpause() {
-    paused = false
+    if (time() >= waitUntil) {
+        paused = false
+        queuedFunction()
+        refresh()
+    } else {
+        waitUntil = time()
+    }
 }
 
 function doEnter() {
@@ -409,8 +422,7 @@ function load() {
                 unpause()
             }
         } else if (e.keyCode == 186 && settings.allowPausing){
-            pauseText = "(Enter to resume)"
-            paused = true
+            pauseThen("(Enter to resume)", pass)
         } else if (e.keyCode == 13){
             doEnter()
         } else if (e.keyCode == 8) {
