@@ -512,7 +512,7 @@ function refreshChangeWarning() {
 }
 
 function loadScores() {
-    const scoreFromCookie = getCookie('scores')
+    const scoreFromCookie = getCookie('topScores')
     if (scoreFromCookie == null) {
         return {}
     } else {
