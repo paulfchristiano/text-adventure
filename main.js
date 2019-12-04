@@ -38,7 +38,7 @@ function heartbeat() {
     if (settings.useTimer && !paused) {
         timeRemaining -= 1
         if (timeRemaining <= 0) {
-            fail()
+            fail(false)
             refresh()
         }
         showTime()
@@ -152,24 +152,34 @@ function refresh() {
     showHighScore()
 }
 
+function asPercent(x) {
+    return Math.round(x*100) + '%'
+}
+
+function renderScore(wins, losses) {
+    return [wins, ' / ', wins + losses, ' (', asPercent(score(wins, losses)), ')'].join('')
+}
+
 function showHighScore() {
     const key = hashDict(settings)
     const scoreData = topScores[key]
     if (scoreData != undefined) {
         const scoreWins = scoreData[1][0]
         const scoreFails = scoreData[1][1]
-        $('#highscore').html(['Personal best:', scoreWins, '/', scoreFails + scoreWins].join(' '))
+        $('#highscore').html('Personal best: ' + renderScore(scoreWins, scoreFails))
         const isTopScore = (scoreData != undefined
                             && scoreData[1][0] == victories.length
                             && scoreData[1][1] == failures.length)
         if (isTopScore) {
             $('#highscore').css('color', 'green')
+            $('#scoreexplainer').html('')
         } else {
             $('#highscore').css('color', 'black')
+            $('#scoreexplainer').html('Current score: ' + renderScore(victories.length, failures.length))
         }
     } else {
         $('#highscore').html('')
-        $('#highscore').html('')
+        $('#scoreexplainer').html('')
     }
 }
 
@@ -223,11 +233,15 @@ function winner() {
     return (bankbits.length == 0) && isWord(currentWord())
 }
 
-function fail() {
+function fail(gaveUp) {
     bonusTimeText = 0
     pauseText = ["(", unpauser("It was "), renderWord(secretWord), ")"].join('')
     failures.push(secretWord)
-    pauseThen(pauseText, initialize, 0.5)
+    var delay = 0.5
+    if (gaveUp) {
+        delay = 0.0
+    }
+    pauseThen(pauseText, initialize, delay)
 }
 
 function succeed(word) {
@@ -544,7 +558,7 @@ function load() {
             scrambleBank()
             e.preventDefault()
         } else if (e.keyCode == 27) {
-            fail()
+            fail(true)
         } else {
             addLetterIfIn(strFromKey(e))
         }

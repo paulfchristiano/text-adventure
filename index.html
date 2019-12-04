@@ -8,6 +8,34 @@
 <script type="text/javascript" src="main.js"></script>
 <title>Anagrams</title>
 </head> 
+
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 240px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+</style>
  
 <body onload="load();"> 
 
@@ -46,39 +74,62 @@
         <input type='radio' name='maxlength' value='9'> 9
         <input type='radio' name='maxlength' value='10'> 10
     </div>
-    <div> Allowed words
+    <div> Allowed words:
         <input type='radio' name='dictionary' value='10k'> Top 10k
         <input type='radio' name='dictionary' value='50k'> Top 50k
         <input type='radio' name='dictionary' value='all'> All (280k)
     </div>
     <div> &nbsp; </div> 
-    <div> Allow pausing? (;) <input type='checkbox' name='allowpausing'> </div>
+    <div> Allow pausing<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                When enabled, press ';' to pause.
+                Scores obtained with pausing don't really count.
+            </span>
+        </div>:
+        <input type='checkbox' name='allowpausing'> </div>
     <div> &nbsp; </div> 
-    <div> Use timer? <input type='checkbox' name='usetimer'> </div>
+    <div> Use timer: <input type='checkbox' name='usetimer'> </div>
     <div> Timer length:
         <input type='radio' name='timelimit' value='15'> 15s
         <input type='radio' name='timelimit' value='30'> 30s
         <input type='radio' name='timelimit' value='60'> 60s
         <input type='radio' name='timelimit' value='120'> 120s
     </div>
-    <div> Extra time for long words:
-        <input type='radio' name='timeadjustment' value='+0'> 0
-        <input type='radio' name='timeadjustment' value='+15'> 15
-        <input type='radio' name='timeadjustment' value='+30'> 30
-        <input type='radio' name='timeadjustment' value='+60'> 60
+    <div>
+        Extra time for long words<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                How much extra time you start with for each additional
+                letter you need to anagram beyond the minimum.
+            </span>
+        </div>:
+        <input type='radio' name='timeadjustment' value='+0'> None
+        <input type='radio' name='timeadjustment' value='+15'> 15s
+        <input type='radio' name='timeadjustment' value='+30'> 30s
+        <input type='radio' name='timeadjustment' value='+60'> 60s
     </div>
-    <div> Bonus seconds per word:
-        <input type='radio' name='timeaddition' value='10,1'> 0
-        <input type='radio' name='timeaddition' value='2,1'> N-2
-        <input type='radio' name='timeaddition' value='0,1'> N
-        <input type='radio' name='timeaddition' value='3,2'> (N-3)^2
+    <div>
+       Bonus seconds per word<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                How much bonus time you earn for finding an N letter word.
+            </span>
+        </div>:
+       <input type='radio' name='timeaddition' value='10,1'> 0
+       <input type='radio' name='timeaddition' value='2,1'> N-2
+       <input type='radio' name='timeaddition' value='0,1'> N
+       <input type='radio' name='timeaddition' value='3,2'> (N-3)^2
     </div>
-    <div> Bonus limit:
-        <input type='radio' name='maxbonus' value='0'> None
-        <input type='radio' name='maxbonus' value='45'> 45s
-        <input type='radio' name='maxbonus' value='90'> 90s
-        <input type='radio' name='maxbonus' value='180'> 180s
-    </div> 
+    <div>
+        Bonus limit<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                The maximum amount of bonus time you can earn by finding small words.
+                The bonus per word will gradually decrease as you approach this limit.
+            </span>
+        </div>:
+            <input type='radio' name='maxbonus' value='0'> None
+            <input type='radio' name='maxbonus' value='45'> 45s
+            <input type='radio' name='maxbonus' value='90'> 90s
+            <input type='radio' name='maxbonus' value='180'> 180s
+    </div>
     <div> &nbsp; </div> 
     <div> Pick a standard mode: </div> 
     <div>
@@ -91,7 +142,13 @@
     <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
     <div> <span style='color:red' id='changewarning'></span> </div>
     <div> &nbsp; </div>
-    <div> <span id='highscore'></span> </div>
+    <div class="tooltip">
+        <span id='highscore'></span>
+        <span class="tooltiptext">
+            Score is a conservative estimate for your underlying success probability.
+        </span>
+    </div>
+    <div> <span id='scoreexplainer'></span> </div>
 
 
  
