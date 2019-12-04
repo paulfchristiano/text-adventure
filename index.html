@@ -73,16 +73,26 @@
         <input type='radio' name='timeaddition' value='0,1'> N
         <input type='radio' name='timeaddition' value='3,2'> (N-3)^2
     </div>
+    <div> Bonus limit:
+        <input type='radio' name='maxbonus' value='0'> None
+        <input type='radio' name='maxbonus' value='45'> 45s
+        <input type='radio' name='maxbonus' value='90'> 90s
+        <input type='radio' name='maxbonus' value='180'> 180s
+    </div> 
     <div> &nbsp; </div> 
     <div> Pick a standard mode: </div> 
     <div>
         <button onclick='setSettings(defaultSettings); reset(); $("#button1").blur()' id=button1>Default</button>
         <button onclick='setSettings(longSettings); reset(); $("#button2").blur()' id=button2>Long</button>
-        <button onclick='setSettings(franticSettings); reset(); $("#button3").blur()' id=button3>Frantic</button>
+        <button onclick='setSettings(quickSettings); reset(); $("#button3").blur()' id=button3>Quick</button>
+        <button onclick='setSettings(franticSettings); reset(); $("#button4").blur()' id=button4>Frantic</button>
     </div>
     <div> &nbsp; </div> 
     <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
     <div> <span style='color:red' id='changewarning'></span> </div>
+    <div> &nbsp; </div>
+    <div> <span id='highscore'></span> </div>
+
 
  
 </body> 

@@ -13,6 +13,9 @@ var victories;
 var failures;
 var pauseText;
 var queuedFunction;
+var bonusScored;
+var bonusReceived;
+var topScores;
 
 // TODO
 //
@@ -145,6 +148,29 @@ function refresh() {
     $('#failures').html(renderWords(failures))
     $('#guesses').html(renderWords(guesses))
     showTime()
+    refreshChangeWarning()
+    showHighScore()
+}
+
+function showHighScore() {
+    const key = hashDict(settings)
+    const scoreData = topScores[key]
+    if (scoreData != undefined) {
+        const scoreWins = scoreData[1][0]
+        const scoreFails = scoreData[1][1]
+        $('#highscore').html(['Personal best:', scoreWins, '/', scoreFails + scoreWins].join(' '))
+        const isTopScore = (scoreData != undefined
+                            && scoreData[1][0] == victories.length
+                            && scoreData[1][1] == failures.length)
+        if (isTopScore) {
+            $('#highscore').css('color', 'green')
+        } else {
+            $('#highscore').css('color', 'black')
+        }
+    } else {
+        $('#highscore').html('')
+        $('#highscore').html('')
+    }
 }
 
 function deleteLetter() {
@@ -207,6 +233,7 @@ function fail() {
 function succeed(word) {
     bonusTimeText = 0
     victories.push(word)
+    updateScores()
     pauseThen(unpauser("(Enter to start)"), initialize)
 }
 
@@ -215,14 +242,30 @@ function getBonusTime(N) {
     return Math.pow(Math.max(0, N - threshold), exp)
 }
 
+function diluteBonus(X) {
+    const L = settings.maxBonus
+    if (settings.maxBonus == 0) {
+        return X
+    } else {
+        return L * (1 - Math.exp(-X / L))
+    }
+}
+
+function addBonus(N) {
+    var bonusTime = getBonusTime(N)
+    bonusScored += bonusTime
+    var targetBonus = diluteBonus(bonusScored)
+    var toReceive = Math.floor(targetBonus - bonusReceived)
+    timeRemaining += toReceive
+    bonusReceived += toReceive
+    bonusTimeText = toReceive
+    showTime()
+}
 
 function addWord() {
     if (guesses.indexOf(currentWord()) == -1) {
         guesses.push(currentWord())
-        var bonusTime = getBonusTime(currentWord().length)
-        timeRemaining += bonusTime
-        bonusTimeText = bonusTime
-        showTime()
+        addBonus(currentWord().length)
     }
 }
 
@@ -234,6 +277,41 @@ function getValue(name) {
     return $('input[name='+name+']:checked').val()
 }
 
+function score(successes, failures) {
+    const m = (successes + 2) / (successes + failures + 4)
+    const stdev = Math.sqrt(m * (1-m) / (successes + failures + 4))
+    return m - 2 * stdev
+}
+
+// TODO: add tooltips
+
+function hashDict(dict) {
+    var x = Object.entries(dict)
+    x.sort()
+    return hashString(x.flat().join(';'))
+}
+
+function updateScores() {
+    const newScore = score(victories.length, failures.length)
+    const key = hashDict(settings)
+    oldScore = topScores[key]
+    if (oldScore == undefined || newScore > oldScore[0]) {
+        topScores[key] = [newScore, [victories.length, failures.length]]
+        setCookie('topScores', topScores)
+    }
+}
+
+function hashString(s){
+    var hash = 0;
+    if (s.length == 0) return hash;
+    for (i = 0; i < s.length; i++) {
+        char = s.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+}
+
 var defaultSettings = {
     timeAdjustmentRule: '+15',
     useTimer: true,
@@ -243,6 +321,7 @@ var defaultSettings = {
     maxLength: 8,
     dictionaryName: '50k',
     bonusTimeRules: '2,1',
+    maxBonus: 0,
 }
 
 var longSettings = {
@@ -254,6 +333,19 @@ var longSettings = {
     maxLength: 10,
     dictionaryName: '50k',
     bonusTimeRules: '2,1',
+    maxBonus: 0,
+}
+
+var quickSettings = {
+    timeAdjustmentRule: '+0',
+    useTimer: true,
+    allowPausing: false,
+    baseTimeLimit: 15,
+    minLength: 6,
+    maxLength: 7,
+    dictionaryName: '50k',
+    bonusTimeRules: '3,2',
+    maxBonus: 45,
 }
 
 var franticSettings = {
@@ -265,6 +357,7 @@ var franticSettings = {
     maxLength: 9,
     dictionaryName: '50k',
     bonusTimeRules: '3,2',
+    maxBonus: 90,
 }
 
 function settingsFromUI() {
@@ -277,6 +370,7 @@ function settingsFromUI() {
         maxLength : Number(getValue('maxlength')),
         dictionaryName : getValue('dictionary'),
         bonusTimeRules: getValue('timeaddition'),
+        maxBonus: Number(getValue('maxbonus')),
     }
 }
 
@@ -302,6 +396,7 @@ function settingsToUI(settings) {
     setTo('maxlength', settings.maxLength)
     setTo('dictionary', settings.dictionaryName)
     setTo('timeaddition', settings.bonusTimeRules)
+    setTo('maxbonus', settings.maxBonus)
 }
 
 function setSettings(newSettings) {
@@ -326,6 +421,8 @@ function initialize() {
     randomBank()
     scrambleBank()
     guesses = []
+    bonusScored = 0
+    bonusReceived = 0
     timeRemaining = getTimeLimit()
     refresh()
 }
@@ -341,7 +438,7 @@ function equalValues(obj1, obj2) {
 }
 
 function setCookie(name,value) {
-    document.cookie = name + "=" + (value || "")  + "; path=/";
+    document.cookie = name + "=" + (JSON.stringify(value) || "")  + "; path=/";
 }
 function getCookie(name) {
     var nameEQ = name + "=";
@@ -349,21 +446,22 @@ function getCookie(name) {
     for(var i=0;i < ca.length;i++) {
         var c = ca[i];
         while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        if (c.indexOf(nameEQ) == 0) return JSON.parse(c.substring(nameEQ.length,c.length));
     }
     return null;
 }
 function settingsFromCookie() {
     var loaded = getCookie('settings')
-    if (loaded == null) {
-        return defaultSettings
-    } else {
-        return JSON.parse(loaded)
+    var result = {}
+    Object.assign(result, defaultSettings)
+    if (loaded != null) {
+        Object.assign(result, loaded)
     }
+    return result
 }
  
 function settingsToCookie(settings) {
-    setCookie('settings', JSON.stringify(settings))
+    setCookie('settings', settings)
 }
 
 function time() {
@@ -405,16 +503,30 @@ function doEnter() {
     }
 }
 
+function refreshChangeWarning() {
+    if (!equalValues(settings, settingsFromUI())) {
+        $('#changewarning').text("Press button to apply changes")
+    } else {
+        $('#changewarning').text("")
+    }
+}
+
+function loadScores() {
+    const scoreFromCookie = getCookie('scores')
+    if (scoreFromCookie == null) {
+        return {}
+    } else {
+        return scoreFromCookie
+    }
+}
+
 function load() {
     setSettings(settingsFromCookie())
     setInterval(heartbeat, 1000)
+    topScores = loadScores()
     reset()
     $(document).click(e => {
-        if (!equalValues(settings, settingsFromUI())) {
-            $('#changewarning').text("Press button to apply changes")
-        } else {
-            $('#changewarning').text("")
-        }
+        refreshChangeWarning()
     })
     $(document).keydown(e => {
         bonusTimeText = 0
