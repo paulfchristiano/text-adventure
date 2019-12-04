@@ -83,7 +83,7 @@
     <div> Allow pausing<div class='tooltip'><sup>?</sup>
             <span class='tooltiptext'>
                 When enabled, press ';' to pause.
-                Scores obtained with pausing don't really count.
+                Scores obtained with pausing don't really count :)
             </span>
         </div>:
         <input type='checkbox' name='allowpausing'> </div>
@@ -131,12 +131,13 @@
             <input type='radio' name='maxbonus' value='180'> 180s
     </div>
     <div> &nbsp; </div> 
-    <div> Pick a standard mode: </div> 
+    <div> Load settings: </div> 
     <div>
-        <button onclick='setSettings(defaultSettings); reset(); $("#button1").blur()' id=button1>Default</button>
-        <button onclick='setSettings(longSettings); reset(); $("#button2").blur()' id=button2>Long</button>
-        <button onclick='setSettings(quickSettings); reset(); $("#button3").blur()' id=button3>Quick</button>
-        <button onclick='setSettings(franticSettings); reset(); $("#button4").blur()' id=button4>Frantic</button>
+        <button onclick='settingsToUI(defaultSettings); $("#button1").blur()' id=button1>Default</button>
+        <button onclick='settingsToUI(longSettings); $("#button2").blur()' id=button2>Long</button>
+        <button onclick='settingsToUI(quickSettings); $("#button3").blur()' id=button3>Quick</button>
+        <button onclick='settingsToUI(franticSettings); $("#button4").blur()' id=button4>Frantic</button>
+        <button onclick='settingsToUI(settings); $("#button5").blur()' id=button5>Current</button>
     </div>
     <div> &nbsp; </div> 
     <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
