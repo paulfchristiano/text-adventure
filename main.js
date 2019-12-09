@@ -17,10 +17,6 @@ var bonusScored;
 var bonusReceived;
 var topScores;
 
-// TODO
-//
-// Improve wordlist
-
 function randomWord(minLength, maxLength) {
     maxLength = Math.max(minLength, maxLength)
     dictionary = getSelectedDictionary()
@@ -182,7 +178,11 @@ function showHighScore() {
         } else {
             $('#highscore').css('color', 'black')
         }
-        $('#scoreexplainer').html('Current score: ' + renderScore(victories.length, failures.length))
+        if (victories.length > 0 || failures.length > 0) {
+            $('#scoreexplainer').html('Current score: ' + renderScore(victories.length, failures.length))
+        } else {
+            $('#scoreexplainer').html('')
+        }
     } else {
         $('#highscore').html("You haven't played with these settings before")
         $('#highscore').css('color', 'black')
