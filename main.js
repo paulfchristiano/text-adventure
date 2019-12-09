@@ -19,8 +19,7 @@ var topScores;
 
 // TODO
 //
-// Fix formatting on mobile
-// Improve word frequency sorting
+// Improve wordlist
 
 function randomWord(minLength, maxLength) {
     maxLength = Math.max(minLength, maxLength)
@@ -126,9 +125,17 @@ function wrapWithAction(text, f) {
 // TODO: handle escapes etc.
 
 function renderLetter(c) {
-    return wrapWithAction(c, "addLetterIfIn('" + c + "'); refresh()")
+    return c
+    //return wrapWithAction(c, "addLetterIfIn('" + c + "'); refresh()")
 }
 
+function renderWinRate(wins, losses) {
+    var winRate = 0
+    if (wins > 0) {
+        winRate = wins / (wins + losses)
+    }
+    return [wins, ' / ', wins+losses, ' (', asPercent(winRate), ')'].join('')
+}
 
 function refresh() {
     if (paused) {
@@ -141,8 +148,7 @@ function refresh() {
         $('#word').html(wrapWithAction(wordbits.join(''), 'doEnter(); refresh()'))
     }
 
-    $('#victorycount').text(victories.length)
-    $('#attempts').text(failures.length + victories.length)
+    $('#winrate').text(renderWinRate(victories.length, failures.length))
 
     $('#victories').html(renderWords(victories))
     $('#failures').html(renderWords(failures))
@@ -157,7 +163,7 @@ function asPercent(x) {
 }
 
 function renderScore(wins, losses) {
-    return [wins, ' / ', wins + losses, ' (', asPercent(score(wins, losses)), ')'].join('')
+    return [wins, ' / ', wins + losses, ' (> ', asPercent(score(wins, losses)), ')'].join('')
 }
 
 function showHighScore() {
@@ -175,10 +181,11 @@ function showHighScore() {
             $('#scoreexplainer').html('')
         } else {
             $('#highscore').css('color', 'black')
-            $('#scoreexplainer').html('Current score: ' + renderScore(victories.length, failures.length))
         }
+        $('#scoreexplainer').html('Current score: ' + renderScore(victories.length, failures.length))
     } else {
-        $('#highscore').html('')
+        $('#highscore').html("You haven't played with these settings before")
+        $('#highscore').css('color', 'black')
         $('#scoreexplainer').html('')
     }
 }
@@ -237,6 +244,7 @@ function fail(gaveUp) {
     bonusTimeText = 0
     pauseText = ["(", unpauser("It was "), renderWord(secretWord), ")"].join('')
     failures.push(secretWord)
+    updateScores()
     var delay = 0.5
     if (gaveUp) {
         delay = 0.0
@@ -294,7 +302,7 @@ function getValue(name) {
 function score(successes, failures) {
     const m = (successes + 2) / (successes + failures + 4)
     const stdev = Math.sqrt(m * (1-m) / (successes + failures + 4))
-    return m - 2 * stdev
+    return Math.max(m - 2 * stdev, 0)
 }
 
 // TODO: add tooltips
@@ -547,6 +555,8 @@ function load() {
         if (paused) {
             if (e.keyCode == 13 || e.keyCode == 186) {
                 unpause()
+            } else if (e.keyCode == 32) {
+                e.preventDefault()
             }
         } else if (e.keyCode == 186 && settings.allowPausing){
             pauseThen("(Enter to resume)", pass)

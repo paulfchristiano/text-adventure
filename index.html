@@ -39,7 +39,7 @@
  
 <body onload="load();"> 
 
-    <div> Score: <span id="victorycount"></span> / <span id="attempts"></span> </div>
+    <div> Wins: <span id="winrate"></span> </div>
     <div> Timer: <span id="time"></span> <span id="bonustime" color="green"></span> </div>
     <div> &nbsp; </div> 
     <div style='font-family:monospace; font-size:2em'> <span id="source"></span> &nbsp; </div>
@@ -146,7 +146,7 @@
     <div class="tooltip">
         <span id='highscore'></span>
         <span class="tooltiptext">
-            Score is a conservative estimate for your underlying success probability.
+            Your score is the bottom of a 95% confidence interval.
         </span>
     </div>
     <div> <span id='scoreexplainer'></span> </div>
