@@ -137,10 +137,10 @@
         <button onclick='settingsToUI(longSettings); $("#button2").blur()' id=button2>Long</button>
         <button onclick='settingsToUI(quickSettings); $("#button3").blur()' id=button3>Quick</button>
         <button onclick='settingsToUI(franticSettings); $("#button4").blur()' id=button4>Frantic</button>
-        <button onclick='settingsToUI(settings); $("#button5").blur()' id=button5>Current</button>
     </div>
     <div> &nbsp; </div> 
-    <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button> </div>
+    <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button>
+    <button onclick='settingsToUI(settings); reset(); $("#revertbutton").blur()' id=revertbutton>Revert changes</button> </div>
     <div> <span style='color:red' id='changewarning'></span> </div>
     <div> &nbsp; </div>
     <div class="tooltip">

@@ -406,7 +406,8 @@ function checkIf(name, test) {
 }
 
 function setTo(name, value) {
-    $('input[name='+name+'][value='+value+']').attr('checked', 'checked')
+    const input = $('input[name='+name+'][value='+value+']')
+    input.attr('checked', 'checked')
 }
 
 function settingsToUI(settings) {
@@ -527,7 +528,7 @@ function doEnter() {
 
 function refreshChangeWarning() {
     if (!equalValues(settings, settingsFromUI())) {
-        $('#changewarning').text("Press button to apply changes")
+        $('#changewarning').text("Press button to apply or revert changes")
     } else {
         $('#changewarning').text("")
     }
