@@ -422,10 +422,28 @@ function settingsToUI(settings) {
     setTo('maxbonus', settings.maxBonus)
 }
 
+function boldDefaultButton(settings) {
+    const buttonsAndSettings = [
+        [$("#button1"), defaultSettings],
+        [$("#button2"), longSettings], 
+        [$("#button3"), quickSettings],
+        [$("#button4"), franticSettings]
+    ]
+    for(var i=0; i < buttonsAndSettings.length; i++) {
+        const [b, s] = buttonsAndSettings[i];
+        if (equalValues(s, settings)) {
+            b.css('font-weight', 'bold')
+        } else {
+            b.css('font-weight', 'normal')
+        }
+    }
+}
+
 function setSettings(newSettings) {
     settings = newSettings
     settingsToCookie(settings)
     settingsToUI(settings)
+    boldDefaultButton(settings)
 }
 
 function unpauser(text) {
