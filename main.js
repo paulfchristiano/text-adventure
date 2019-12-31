@@ -313,13 +313,15 @@ function hashDict(dict) {
     return hashString(x.flat().join(';'))
 }
 
+const scoreKey = 'topScores'
+
 function updateScores() {
     const newScore = score(victories.length, failures.length)
     const key = hashDict(settings)
     oldScore = topScores[key]
     if (oldScore == undefined || newScore > oldScore[0]) {
         topScores[key] = [newScore, [victories.length, failures.length]]
-        setCookie('topScores', topScores)
+        setCookie(scoreKey, topScores)
     }
 }
 
@@ -553,7 +555,7 @@ function refreshChangeWarning() {
 }
 
 function loadScores() {
-    const scoreFromCookie = getCookie('topScores')
+    const scoreFromCookie = getCookie(scoreKey)
     if (scoreFromCookie == null) {
         return {}
     } else {
