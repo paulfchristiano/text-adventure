@@ -481,7 +481,7 @@ function equalValues(obj1, obj2) {
 }
 
 function setCookie(name,value) {
-    document.cookie = name + "=" + (JSON.stringify(value) || "")  + "; path=/";
+    document.cookie = name + "=" + (JSON.stringify(value) || "")  + "; max-age=315360000; path=/";
 }
 function getCookie(name) {
     var nameEQ = name + "=";
