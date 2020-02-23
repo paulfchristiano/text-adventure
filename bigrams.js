@@ -536,10 +536,10 @@ function equalValues(obj1, obj2) {
 }
 
 function setCookie(name,value) {
-    document.cookie = name + "=" + (JSON.stringify(value) || "")  + "; max-age=315360000; path=/";
+    document.cookie = "bigram" + name + "=" + (JSON.stringify(value) || "")  + "; max-age=315360000; path=/";
 }
 function getCookie(name) {
-    var nameEQ = name + "=";
+    var nameEQ = "bigram" + name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
         var c = ca[i];
