@@ -1,0 +1,196 @@
+<html> 
+<head> 
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="dictionary.js"></script>
+<script type="text/javascript" src="scrabble.js"></script>
+<script type="text/javascript" src="jquery.js"></script> 
+<script type="text/javascript" src="bigrams.js"></script>
+<title>Bigrams</title>
+</head> 
+
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.selected {
+    font-weight: bold;
+    color: orange;
+}
+
+.confirmed {
+    color: green;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 240px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: -5px;
+  left: 105%;
+}
+
+.index {
+    font:Times New Roman;
+    font-size:1.7em;
+}
+
+.wordbits {
+    font-family:monospace;
+    font-size:2em
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+</style>
+ 
+<body onload="load();"> 
+
+    <div> Wins: <span id="winrate"></span> </div>
+    <div> Timer: <span id="time"></span> <span id="bonustime" color="green"></span> </div>
+    <div> &nbsp; </div> 
+    <div style='font-size:2em'> <span id="source"></span> &nbsp; </div>
+    <div>
+        <span id="word0header" class='index'>1.</span>
+        <span id="word0" class='wordbits'></span>
+        &nbsp;
+    </div> 
+    <div>
+        <span id="word1header" class='index'>2.</span>
+        <span id="word1" class='wordbits'></span>
+        &nbsp;
+    </div> 
+    <div> &nbsp; </div> 
+    <div style='max-width:60ch;'> Near-misses: <span id="guesses"></span> &nbsp; </div> 
+    <div> &nbsp; </div> 
+    <div style='max-width:60ch;'> Victories: <span id="victories"></span> &nbsp; </div> 
+    <div> &nbsp; </div>
+    <div style='max-width:60ch;'> Failures: <span id="failures"></span> &nbsp; </div> 
+    <div> &nbsp; </div>
+    <div> Goal: use the letters to make two words. </div>
+    <div> Use all letters to win.</div>
+    <div> Use most letters for bonus time.</div>
+    <div> 'Enter' to confirm a word or clear. </div>
+    <div> 'Tab' to switch to other word. </div>
+    <div> 'Space' to scramble. </div>
+    <div> 'Escape' to give up. </div>
+    <div> Click a word to see its definition.</div>
+    <div> &nbsp; </div> 
+    <div> Minimum length:
+        <input type='radio' name='minlength' value='3'> 3
+        <input type='radio' name='minlength' value='4'> 4
+        <input type='radio' name='minlength' value='5'> 5
+        <input type='radio' name='minlength' value='6'> 6 
+        <input type='radio' name='minlength' value='7'> 7
+        <input type='radio' name='minlength' value='8'> 8
+    </div>
+    <div> Maximum length:
+        <input type='radio' name='maxlength' value='3'> 3
+        <input type='radio' name='maxlength' value='4'> 4
+        <input type='radio' name='maxlength' value='5'> 5
+        <input type='radio' name='maxlength' value='6'> 6 
+        <input type='radio' name='maxlength' value='7'> 7
+        <input type='radio' name='maxlength' value='8'> 8
+    </div>
+    <div> Possible words<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                Anagrams will be from the N most common words in Project Gutenberg.
+                You are always allowed to submit any valid Scrabble word,
+                we just promise that you don't *need* to.
+            </span>:
+        </div>
+        <input type='radio' name='dictionary' value='10k'> Top 10k
+        <input type='radio' name='dictionary' value='50k'> Top 50k
+        <input type='radio' name='dictionary' value='all'> All (280k)
+    </div>
+    <div> &nbsp; </div> 
+    <div> Allow pausing<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                When enabled, press ';' to pause.
+                Scores obtained with pausing don't really count :)
+            </span>
+        </div>:
+        <input type='checkbox' name='allowpausing'> </div>
+    <div> &nbsp; </div> 
+    <div> Use timer: <input type='checkbox' name='usetimer'> </div>
+    <div> Timer length:
+        <input type='radio' name='timelimit' value='15'> 15s
+        <input type='radio' name='timelimit' value='30'> 30s
+        <input type='radio' name='timelimit' value='45'> 45s
+        <input type='radio' name='timelimit' value='60'> 60s
+    </div>
+    <div>
+        Extra time for long words<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                How much extra time you start with for each additional
+                letter you need to anagram beyond the minimum.
+            </span>
+        </div>:
+        <input type='radio' name='timeadjustment' value='+0'> None
+        <input type='radio' name='timeadjustment' value='+5'> 5s
+        <input type='radio' name='timeadjustment' value='+10'> 10s
+        <input type='radio' name='timeadjustment' value='+20'> 20s
+    </div>
+    <div>
+       Bonus seconds for near-miss<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                How much bonus time you earn for finding a pair that uses
+                all but 1 or 2 letters.
+            </span>
+        </div>:
+       <input type='radio' name='timeaddition' value='0,0'> 0
+       <input type='radio' name='timeaddition' value='5,0'> 5
+       <input type='radio' name='timeaddition' value='8,4'> 10,3
+       <input type='radio' name='timeaddition' value='16,8'> 20,5
+    </div>
+    <!--
+    <div>
+        Bonus limit<div class='tooltip'><sup>?</sup>
+            <span class='tooltiptext'>
+                The maximum amount of bonus time you can earn by finding small words.
+                The bonus per word will gradually decrease as you approach this limit.
+            </span>
+        </div>:
+            <input type='radio' name='maxbonus' value='0'> None
+            <input type='radio' name='maxbonus' value='45'> 45s
+            <input type='radio' name='maxbonus' value='90'> 90s
+            <input type='radio' name='maxbonus' value='180'> 180s
+    </div>
+    -->
+    <div> &nbsp; </div> 
+    <div> Load settings: </div> 
+    <div>
+        <button onclick='settingsToUI(defaultSettings); $("#button1").blur()' id=button1 style='font-weight:bold'>Default</button>
+        <button onclick='settingsToUI(longSettings); $("#button2").blur()' id=button2>Long</button>
+        <button onclick='settingsToUI(quickSettings); $("#button3").blur()' id=button3>Quick</button>
+        <button onclick='settingsToUI(franticSettings); $("#button4").blur()' id=button4>Frantic</button>
+    </div>
+    <div> &nbsp; </div> 
+    <div> <button onclick='setSettings(settingsFromUI()); reset(); $("#applybutton").blur()' id=applybutton>Apply changes and reset</button>
+    <button onclick='settingsToUI(settings); $("#revertbutton").blur()' id=revertbutton>Revert changes</button> </div>
+    <div> <span style='color:red' id='changewarning'></span> </div>
+    <div> &nbsp; </div>
+    <div class="tooltip">
+        <span id='highscore'></span>
+        <span class="tooltiptext">
+            Your score is the bottom of a 95% confidence interval.
+        </span>
+    </div>
+    <div> <span id='scoreexplainer'></span> </div>
+
+
+ 
+</body> 
+</html> 
