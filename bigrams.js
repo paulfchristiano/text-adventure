@@ -401,18 +401,18 @@ var defaultSettings = {
     minLength: 5,
     maxLength: 6,
     dictionaryName: '10k',
-    bonusTimeRules: '8,4',
+    bonusTimeRules: '5,2',
 }
 
 var longSettings = {
-    timeAdjustmentRule: '+20',
+    timeAdjustmentRule: '+10',
     useTimer: true,
     allowPausing: false,
     baseTimeLimit: 45,
     minLength: 6,
     maxLength: 7,
     dictionaryName: '10k',
-    bonusTimeRules: '16,8',
+    bonusTimeRules: '10,4',
 }
 
 var quickSettings = {
@@ -423,7 +423,7 @@ var quickSettings = {
     minLength: 4,
     maxLength: 5,
     dictionaryName: '10k',
-    bonusTimeRules: '5,0',
+    bonusTimeRules: '3,1',
 }
 
 var franticSettings = {
@@ -434,7 +434,7 @@ var franticSettings = {
     minLength: 5,
     maxLength: 7,
     dictionaryName: '50k',
-    bonusTimeRules: '8,4',
+    bonusTimeRules: '10,4',
 }
 
 function settingsFromUI() {
