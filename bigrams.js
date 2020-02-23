@@ -167,6 +167,7 @@ function refresh() {
         $('#word1').html('')
         $('#word0header').removeClass('selected')
         $('#word1header').removeClass('selected')
+        $('#misses').html('')
     } else {
         $('#source').html(bankbits.map(renderLetter).join(''))
         $('#source').css('font-family', 'monospace')
@@ -180,13 +181,13 @@ function refresh() {
             $(x).removeClass('confirmed')
             if (confirmed[i]) $(x).addClass('confirmed')
         })
+        $('#misses').html(renderMisses(misses))
     }
 
     $('#winrate').text(renderWinRate(victories.length, failures.length))
 
     $('#victories').html(renderPairs(victories))
     $('#failures').html(renderPairs(failures))
-    $('#misses').html(renderMisses(misses))
     showTime()
     refreshChangeWarning()
     showHighScore()
