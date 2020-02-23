@@ -334,7 +334,8 @@ function addPair([a, b]) {
             const remaining = bankbits.slice()
             remaining.sort()
             for (var i = 0; i < guesses.length; i++) {
-                if (guesses[i][0] == remaining[0] && (remaining.length<2 || guesses[i][1] == remaining[1])) {
+                if (guesses.length == remaining.length && guesses[i][0] == remaining[0]
+                        && (remaining.length<2 || guesses[i][1] == remaining[1])) {
                     console.log(i)
                     console.log(guesses[i])
                     console.log(remaining)
@@ -523,7 +524,8 @@ function initialize() {
     refresh()
 }
 
-//TODO: change bonus behavior etc.
+// TODO: links between bigrams and main game
+// TODO: rebalance difficulties, at least 'long'
 
 function equalValues(obj1, obj2) {
     var props1 = Object.getOwnPropertyNames(obj1)
@@ -612,10 +614,6 @@ function doEnter() {
     }
 }
 
-function submitPair() {
-
-}
-
 function refreshChangeWarning() {
     if (!equalValues(settings, settingsFromUI())) {
         $('#changewarning').text("Press button to apply or revert changes")
@@ -634,7 +632,10 @@ function loadScores() {
 }
 
 function doTab() {
-    if (!confirmed[focus] && isWord(currentWord())) confirmed[focus] = true
+    if (!confirmed[focus] && isWord(currentWord())) {
+        confirmed[focus] = true
+        addPair(wordbits.map(x => x.join('')))
+    }
     focus = 1 - focus
 }
 
