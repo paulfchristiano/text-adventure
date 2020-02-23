@@ -2,7 +2,7 @@ var wordbits;
 var bankbits;
 var secretPair;
 var confirmed;
-var nearmisses
+var misses
 var minlength;
 var maxlength;
 var settings;
@@ -132,8 +132,8 @@ function renderPairs(pairs) {
     return pairs.map(renderPair).join(' ')
 }
 
-function renderMisses(misses) {
-    return misses.map(miss => miss.join('')).map(x=>'-'+x).join(',')
+function renderMisses(xs) {
+    return xs.map(miss => miss.join('')).map(x=>'-'+x).join(',')
 }
 
 function renderWords(words) {
@@ -186,7 +186,7 @@ function refresh() {
 
     $('#victories').html(renderPairs(victories))
     $('#failures').html(renderPairs(failures))
-    $('#nearmisses').html(renderMisses(nearmisses))
+    $('#misses').html(renderMisses(misses))
     showTime()
     refreshChangeWarning()
     showHighScore()
@@ -333,16 +333,16 @@ function addPair([a, b]) {
         } else if (bankbits.length <= 2) {
             const remaining = bankbits.slice()
             remaining.sort()
-            for (var i = 0; i < nearmisses.length; i++) {
-                if (nearmisses.length == remaining.length && nearmisses[i][0] == remaining[0]
-                        && (remaining.length<2 || nearmisses[i][1] == remaining[1])) {
+            for (var i = 0; i < misses.length; i++) {
+                if (misses[i].length == remaining.length && misses[i][0] == remaining[0]
+                        && (remaining.length<2 || misses[i][1] == remaining[1])) {
                     console.log(i)
-                    console.log(nearmisses[i])
+                    console.log(misses[i])
                     console.log(remaining)
                     return
                 }
             }
-            nearmisses.push(remaining)
+            misses.push(remaining)
             addBonus(remaining.length)
         }
     }
@@ -507,7 +507,7 @@ function unpauser(text) {
 function reset(){
     victories = []
     failures = []
-    nearmisses = []
+    misses = []
     pauseThen(unpauser("(Enter to start)"), initialize)
 }
 
@@ -517,7 +517,7 @@ function initialize() {
     focus = 0
     randomBank()
     scrambleBank()
-    nearmisses = []
+    misses = []
     bonusScored = 0
     bonusReceived = 0
     timeRemaining = getTimeLimit()
