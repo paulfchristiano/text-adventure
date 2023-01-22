@@ -1,1 +1,4 @@
 plain_js
+*.js
+*.js.map
+*~

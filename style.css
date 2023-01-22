@@ -1,0 +1,58 @@
+.standardBox {
+    font-size: 1em;
+    border: 2px solid;
+    border-radius: 5px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-left: 8px;
+    display: inline-block;
+    cursor:default;
+    text-align: center;
+    position: relative;
+    background: white;
+    user-select: none;
+}
+
+#wordbank {
+    font-family:monospace;
+    font-size:2em;
+    height:1em;
+}
+
+.wordPair {
+    font-size:2em;
+    font-family:monospace;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+[focused="true"] {
+    font-weight: bold;
+    color: orange;
+}
+
+[confirmed="true"] {
+    color: green;
+}
+
+[validtarget="true"] {
+    color: green;
+    font-weight: bold;
+}
+
+.inventoryItem {
+    margin-top: 0.5em;
+}
+
+.itemSpan {
+    cursor: pointer;
+    user-select: none;
+}
+
+.action {
+    margin-left: 1em;
+    cursor: pointer;
+    user-select: none;
+}

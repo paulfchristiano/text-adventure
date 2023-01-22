@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script type="text/javascript" src="actions.js"></script>
+        <script type="text/javascript" src="items.js"></script>
+        <script type="text/javascript" src="main.js"></script>
+        <link rel="stylesheet" href="style.css">
+        <title>Text Adventure</title>
+    </head>
+    <body>
+        <div id="header">
+            <span class="standardBox" id="undoButton">Undo</span>
+        </div>
+        <div id="transmogrifier">
+            <div id="transmogrifierInputs" class='wordPair'>
+                <div>1. <span id="input1"></span></div>
+                <div>2. <span id="input2"></span></div>
+            </div>
+            <div id="wordbank"></div>
+            <div id="transmogrifierOutputs" class='wordPair'>
+                <div><span id="output1span">1.</span> <span id="output1"></span></div>
+                <div><span id="output2span">2.</span> <span id="output2"></span></div>
+            </div>
+        </div>
+        <div id="inventory">
+            <div id="inventoryHeader" style="font-size: 2em">Inventory</div>
+            <div id="inventoryItems" style="font-size: 1.2em"></div>
+        </div>
+    </body>
+</html>
