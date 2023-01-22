@@ -18,4 +18,14 @@ const actions:Action[] = [{
     description: 'Smash the glass.',
     subject: ['glass'],
     results: ['glass shards']
+}, {
+    name: 'peel',
+    description: 'Peel the lemon.',
+    subject: ['lemon'],
+    results: ['peeled lemon']
+}, {
+    name: 'eat',
+    description: 'Eat the lemon.',
+    subject: ['peeled lemon'],
+    results: ['lemon peel']
 }]

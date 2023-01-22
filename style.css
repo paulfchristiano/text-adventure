@@ -13,6 +13,7 @@
     position: relative;
     background: white;
     user-select: none;
+    cursor: pointer;
 }
 
 #wordbank {
@@ -46,13 +47,40 @@
     margin-top: 0.5em;
 }
 
-.itemSpan {
+.itemName {
     cursor: pointer;
     user-select: none;
+    display: inline-block;
+    position: relative;
+    min-width: 10em;
 }
 
 .action {
     margin-left: 1em;
     cursor: pointer;
     user-select: none;
+    display: inline-block;
+    position: relative;
 }
+
+.tooltip {
+    visibility: hidden;
+    width: 20em;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 4;
+    top: 1.2em;
+    left: 0.5em;
+  }
+  
+  
+  @media (hover: hover) {
+      .action:hover .tooltip, .itemName:hover .tooltip {
+          visibility: visible;
+          transition-delay: 0.5s;
+      }
+  }

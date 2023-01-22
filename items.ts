@@ -152,4 +152,22 @@ const items:Item[] = [{
     subname: 'glass',
     description: 'A pile of broken glass.',
     id: 'glass shards'
+}, {
+    name: 'lemon',
+    description: 'A bright yellow lemon.',
+    id: 'lemon'
+}, {
+    name: 'melon',
+    description: 'A green melon with a hard shell.',
+    id: 'melon'
+}, {
+    id: 'peeled lemon',
+    name: 'lemon',
+    subname: 'peeled',
+    description: 'The fruit of a lemon, sitting next to its peel.'
+}, {
+    id: 'lemon peel',
+    name: 'peel',
+    subname: 'lemon',
+    description: 'The yellow peel of a lemon.'
 }]
